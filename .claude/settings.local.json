@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(npm --version)",
-      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-eslint --import-alias \"@/*\" --yes)"
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-eslint --import-alias \"@/*\" --yes)",
+      "Bash(npm install *)",
+      "Bash(cp /Users/ramchawla/Downloads/files/01_schema.sql /Users/ramchawla/Desktop/coding/gamify/supabase/migrations/001_initial.sql)",
+      "Bash(cp /Users/ramchawla/Downloads/files/02_seed.sql /Users/ramchawla/Desktop/coding/gamify/supabase/seed.sql)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)"
     ]
   }
 }

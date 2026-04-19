@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
+@theme {
+  /* Background layers */
+  --color-base: #0D0D0F;
+  --color-surface: #1A1F2E;
+
+  /* Text */
+  --color-primary: #F0EEE9;
+  --color-secondary: #8A8F9E;
+  --color-muted: #4A4F61;
+
+  /* Gold accent */
+  --color-gold-400: #EAB308;
+  --color-gold-500: #C8902A;
+  --color-gold-600: #A67420;
+  --color-gold-tint: rgba(200, 144, 42, 0.12);
+
+  /* Green accent */
+  --color-green-500: #4A7C59;
+  --color-green-tint: rgba(74, 124, 89, 0.10);
+
+  /* Submission type icons */
+  --color-icon-photo: #C8902A;
+  --color-icon-text: #4A7C59;
+  --color-icon-video: #7F77DD;
+  --color-icon-location: #60A5FA;
+
+  /* Semantic */
+  --color-error-text: #F87171;
+  --color-error-bg: rgba(248, 113, 113, 0.10);
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Motion durations */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-cinematic: 600ms;
+
+  /* Easing */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0D0D0F;
+  color: #F0EEE9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Standard card */
+.card {
+  background-color: #1A1F2E;
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+}
+
+.card-hover {
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.card-hover:hover {
+  border-color: rgba(255,255,255,0.16);
+}
+
+/* Gold tint card (user's leaderboard row, etc.) */
+.card-gold {
+  background-color: rgba(200,144,42,0.12);
+  border: 1px solid rgba(200,144,42,0.40);
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Float-in animation */
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.float-in {
+  animation: float-in var(--duration-slow) var(--ease-cinematic) both;
+}
+
+/* Stagger children */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(n+7) { animation-delay: 360ms; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Safe area padding for mobile */
+.safe-top    { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
