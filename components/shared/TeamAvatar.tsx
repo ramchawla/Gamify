@@ -8,15 +8,6 @@ interface Props {
   className?: string
 }
 
-function teamColor(photoUrl: string | null | undefined): string {
-  if (photoUrl?.startsWith('color:')) return photoUrl.slice(6)
-  return '#C8902A'
-}
-
-function isColorAlias(photoUrl: string | null | undefined): boolean {
-  return !!photoUrl?.startsWith('color:')
-}
-
 export default function TeamAvatar({ name, photoUrl, size = 40, className }: Props) {
   const initials = name
     .split(' ')
@@ -25,7 +16,7 @@ export default function TeamAvatar({ name, photoUrl, size = 40, className }: Pro
     .join('')
     .toUpperCase()
 
-  if (photoUrl && !isColorAlias(photoUrl)) {
+  if (photoUrl) {
     return (
       <Image
         src={photoUrl}
@@ -38,18 +29,13 @@ export default function TeamAvatar({ name, photoUrl, size = 40, className }: Pro
     )
   }
 
-  const bg = teamColor(photoUrl)
-
   return (
     <div
-      className={cn('rounded-full flex items-center justify-center font-semibold shrink-0', className)}
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.35,
-        background: bg,
-        color: '#0A0908',
-      }}
+      className={cn(
+        'rounded-full flex items-center justify-center font-semibold text-[#0D0D0F] bg-[#C8902A] shrink-0',
+        className
+      )}
+      style={{ width: size, height: size, fontSize: size * 0.35 }}
     >
       {initials}
     </div>
