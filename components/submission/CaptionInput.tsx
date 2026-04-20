@@ -16,20 +16,18 @@ export default function CaptionInput({ value, onChange, placeholder, disabled }:
   const warn = remaining < 20
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
+      <p className="eyebrow">Caption</p>
       <textarea
         value={value}
         onChange={e => onChange(e.target.value.slice(0, MAX))}
         placeholder={placeholder ?? 'Add a caption…'}
         disabled={disabled}
         rows={3}
-        className={cn(
-          'w-full resize-none rounded-xl px-4 py-3 text-sm bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.10)] text-[#F0EEE9] placeholder:text-[#4A4F61] focus:outline-none focus:border-[rgba(200,144,42,0.50)] transition-colors',
-          disabled && 'opacity-50'
-        )}
+        className={cn('w-full resize-none input-editorial leading-relaxed py-3', disabled && 'opacity-50')}
       />
       <div className="flex justify-end">
-        <span className={cn('text-xs', warn ? 'text-[#F87171]' : 'text-[#4A4F61]')}>
+        <span className={cn('text-[11px] tabular', warn ? 'text-[#C87461]' : 'text-[#4A4540]')}>
           {remaining}
         </span>
       </div>

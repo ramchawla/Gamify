@@ -1,6 +1,5 @@
 'use client'
 
-import TeamAvatar from '@/components/shared/TeamAvatar'
 import { cn } from '@/lib/utils'
 import type { Team } from '@/types'
 
@@ -10,33 +9,32 @@ interface Props {
   isMyTeam?: boolean
 }
 
-const medalColors = ['#EAB308', '#8A8F9E', '#C8902A'] // gold, silver, bronze
-
 export default function LeaderboardRow({ team, rank, isMyTeam }: Props) {
-  const medal = rank <= 3 ? medalColors[rank - 1] : null
-
   return (
     <div
       className={cn(
-        'flex items-center gap-3 px-4 py-3 rounded-xl transition-colors',
-        isMyTeam ? 'card-gold' : 'hover:bg-[rgba(255,255,255,0.03)]'
+        'flex items-baseline gap-4 px-5 py-4 hairline transition-colors',
+        isMyTeam ? 'bg-[rgba(200,144,42,0.06)]' : ''
       )}
     >
       <span
-        className="w-7 text-center font-semibold text-base shrink-0"
-        style={{ color: medal ?? '#8A8F9E' }}
+        className={cn(
+          'font-display tabular w-8 text-right leading-none',
+          isMyTeam ? 'text-[#C8902A]' : 'text-[#8A8473]'
+        )}
+        style={{ fontSize: 20, fontWeight: 400 }}
       >
         {rank}
       </span>
 
-      <TeamAvatar name={team.name} photoUrl={team.photo_url} size={36} />
-
-      <span className={cn('flex-1 font-medium text-sm truncate', isMyTeam ? 'text-[#F0EEE9]' : 'text-[#F0EEE9]')}>
+      <span className={cn('flex-1 text-[15px] leading-none', isMyTeam ? 'text-[#F3EFE6] font-medium' : 'text-[#F3EFE6]')}>
         {team.name}
-        {isMyTeam && <span className="ml-1.5 text-[10px] text-[#C8902A] font-medium">YOU</span>}
+        {isMyTeam && (
+          <span className="ml-2 eyebrow !text-[9px] !tracking-[0.18em] text-[#C8902A]">You</span>
+        )}
       </span>
 
-      <span className="font-semibold text-sm text-[#C8902A]">
+      <span className="font-display tabular text-[#C6C0B4] leading-none" style={{ fontSize: 16, fontWeight: 400 }}>
         {team.total_points.toLocaleString()}
       </span>
     </div>

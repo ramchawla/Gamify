@@ -1,4 +1,4 @@
-import { Trophy } from 'lucide-react'
+import Image from 'next/image'
 import type { Team } from '@/types'
 import { ordinal } from '@/lib/utils'
 
@@ -10,39 +10,67 @@ interface Props {
   totalMissions: number
 }
 
-export default function SeasonHeroBanner({ team, rank, totalTeams, missionsCompleted, totalMissions }: Props) {
+export default function SeasonHeroBanner({
+  team, rank, totalTeams, missionsCompleted, totalMissions,
+}: Props) {
   const progress = totalMissions > 0 ? (missionsCompleted / totalMissions) * 100 : 0
 
   return (
-    <div className="relative overflow-hidden rounded-2xl p-5 mx-4 mt-4 bg-[#1A1F2E] border border-[rgba(255,255,255,0.08)]"
-         style={{ background: 'linear-gradient(135deg, #1A1F2E 0%, #0D1225 100%)' }}>
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E]">Your Team</p>
-          <h2 className="text-xl font-bold text-[#F0EEE9] mt-0.5">{team.name}</h2>
-          <p className="text-[#C8902A] font-semibold text-2xl mt-1">{team.total_points.toLocaleString()} pts</p>
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[rgba(200,144,42,0.12)] border border-[rgba(200,144,42,0.40)]">
-            <Trophy size={14} className="text-[#C8902A]" />
-            <span className="text-[#C8902A] font-semibold text-sm">{ordinal(rank)}</span>
-          </div>
-          <span className="text-[11px] text-[#4A4F61]">of {totalTeams} teams</span>
-        </div>
+    <section className="relative mx-4 mt-4 overflow-hidden rounded-2xl">
+      {/* Imagery */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/hero-domes.jpg"
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 640px"
+          className="object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(10,9,8,0.30) 0%, rgba(10,9,8,0.55) 45%, rgba(10,9,8,0.88) 100%)',
+          }}
+        />
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-[#8A8F9E]">
-          <span>{missionsCompleted} missions done</span>
-          <span>{totalMissions - missionsCompleted} remaining</span>
+      <div className="relative p-6 min-h-[220px] flex flex-col justify-between">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="eyebrow">Your Team</p>
+            <h2 className="font-display text-[28px] leading-tight text-[#F3EFE6] mt-1" style={{ fontWeight: 400 }}>
+              {team.name}
+            </h2>
+          </div>
+          <div className="text-right">
+            <p className="eyebrow">Rank</p>
+            <p className="font-display text-[22px] text-[#C8902A] tabular mt-1" style={{ fontWeight: 400 }}>
+              {ordinal(rank)}
+            </p>
+            <p className="text-[11px] text-[#8A8473] tabular">of {totalTeams}</p>
+          </div>
         </div>
-        <div className="h-1.5 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
-          <div
-            className="h-full rounded-full bg-[#C8902A] transition-all"
-            style={{ width: `${progress}%` }}
-          />
+
+        <div className="mt-10">
+          <div className="flex items-baseline justify-between mb-3">
+            <p className="font-display text-[44px] text-[#F3EFE6] tabular leading-none" style={{ fontWeight: 400 }}>
+              {team.total_points.toLocaleString()}
+            </p>
+            <p className="eyebrow">points</p>
+          </div>
+          <div className="h-px bg-[rgba(243,239,230,0.15)] relative">
+            <div
+              className="absolute left-0 top-0 h-px bg-[#C8902A] transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between mt-2">
+            <p className="text-[11px] text-[#C6C0B4] tabular">{missionsCompleted} of {totalMissions} missions</p>
+            <p className="text-[11px] text-[#8A8473] tabular">{Math.round(progress)}%</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

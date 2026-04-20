@@ -1,7 +1,7 @@
 import { getServerSession } from '@/lib/session'
+import { getTeam, getRankedTeams, getTeamMembers, getActiveSeason } from '@/lib/data'
+import { DEMO_SUBMISSIONS, DEMO_MISSIONS, isDemoMode } from '@/lib/mock-data'
 import { createAdminClient } from '@/lib/supabase/admin'
-import TeamAvatar from '@/components/shared/TeamAvatar'
-import StatChip from '@/components/shared/StatChip'
 import ProgressBar from '@/components/profile/ProgressBar'
 import MilestoneRow from '@/components/profile/MilestoneRow'
 import { MILESTONE_THRESHOLDS } from '@/lib/constants'
@@ -10,73 +10,96 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+async function getRecentSubmissions(teamId: string) {
+  if (isDemoMode()) {
+    return DEMO_SUBMISSIONS
+      .filter(s => s.team_id === teamId)
+      .map(s => ({
+        ...s,
+        mission_title: DEMO_MISSIONS.find(m => m.id === s.mission_id)?.title ?? 'Mission',
+      }))
+  }
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from('submissions')
+    .select('id,mission_id,points_awarded,submitted_at,missions(title)')
+    .eq('team_id', teamId)
+    .order('submitted_at', { ascending: false })
+  return (data ?? []).map(s => ({
+    ...s,
+    mission_title: (s.missions as unknown as { title: string } | null)?.title ?? 'Mission',
+  }))
+}
+
 export default async function ProfilePage() {
   const session = await getServerSession()
   if (!session) return null
 
-  const supabase = createAdminClient()
+  const [team, ranked, members, season, submissions] = await Promise.all([
+    getTeam(session.team_id),
+    getRankedTeams(session.season_id),
+    getTeamMembers(session.team_id),
+    getActiveSeason(),
+    getRecentSubmissions(session.team_id),
+  ])
 
-  const [{ data: team }, { data: members }, { data: submissions }, { data: ranked }, { data: season }] =
-    await Promise.all([
-      supabase.from('teams').select('*').eq('id', session.team_id).single(),
-      supabase.from('team_members').select('*').eq('team_id', session.team_id),
-      supabase.from('submissions').select('id,mission_id,media_url,points_awarded,submitted_at,caption,missions(title,category)').eq('team_id', session.team_id).order('submitted_at', { ascending: false }),
-      supabase.from('teams').select('id,total_points').eq('season_id', session.season_id).order('total_points', { ascending: false }),
-      supabase.from('seasons').select('total_missions').eq('status', 'active').single(),
-    ])
+  if (!team) return <div className="p-6 text-[#8A8473] text-sm">Team not found.</div>
 
-  if (!team) return <div className="p-4 text-[#8A8F9E]">Team not found.</div>
-
-  const rank = (ranked ?? []).findIndex(t => t.id === session.team_id) + 1
-  const totalMissions = season?.total_missions ?? 35
-  const completedCount = (submissions ?? []).length
+  const rank = ranked.findIndex(t => t.id === session.team_id) + 1
+  const totalMissions = season?.total_missions ?? 24
+  const completedCount = submissions.length
 
   return (
-    <div className="pb-4 space-y-5">
-      {/* Team header */}
-      <div className="px-4 pt-6">
-        <div className="flex items-center gap-4">
-          <TeamAvatar name={team.name} photoUrl={team.photo_url} size={56} />
-          <div>
-            <h1 className="text-2xl font-bold text-[#F0EEE9]">{team.name}</h1>
-            <p className="text-[#8A8F9E] text-sm">{ordinal(rank)} place</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="px-4 flex gap-3">
-        <StatChip value={team.total_points.toLocaleString()} label="Points" gold className="flex-1" />
-        <StatChip value={ordinal(rank)} label="Rank" className="flex-1" />
-        <StatChip value={completedCount} label="Done" className="flex-1" />
+    <div className="pb-10">
+      {/* Editorial masthead */}
+      <div className="px-6 pt-10 pb-6 text-center border-b border-[rgba(243,239,230,0.08)]">
+        <p className="eyebrow">{ordinal(rank)} place</p>
+        <h1 className="font-display text-[36px] text-[#F3EFE6] leading-tight mt-2" style={{ fontWeight: 400 }}>
+          {team.name}
+        </h1>
+        <p className="font-display tabular text-[#C8902A] text-[40px] leading-none mt-4" style={{ fontWeight: 400 }}>
+          {team.total_points.toLocaleString()}
+        </p>
+        <p className="eyebrow mt-2">points this season</p>
       </div>
 
       {/* Progress */}
-      <div className="px-4">
+      <div className="px-6 py-8">
+        <p className="eyebrow mb-3">Season progress</p>
         <ProgressBar completed={completedCount} total={totalMissions} />
       </div>
 
       {/* Milestones */}
-      <div className="px-4 card py-2">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E] mb-1 px-0 pt-2">Milestones</p>
-        {MILESTONE_THRESHOLDS.map(t => (
-          <MilestoneRow key={t} threshold={t} completedCount={completedCount} totalMissions={totalMissions} />
-        ))}
+      <div className="px-6 py-4 border-t border-[rgba(243,239,230,0.08)]">
+        <p className="eyebrow mb-3">Milestones</p>
+        <div className="space-y-0">
+          {MILESTONE_THRESHOLDS.map(t => (
+            <MilestoneRow key={t} threshold={t} completedCount={completedCount} totalMissions={totalMissions} />
+          ))}
+        </div>
       </div>
 
       {/* Members */}
-      {members && members.length > 0 && (
-        <div className="px-4">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E] mb-2">Team Members</p>
-          <div className="card divide-y divide-[rgba(255,255,255,0.05)]">
+      {members.length > 0 && (
+        <div className="px-6 py-6 border-t border-[rgba(243,239,230,0.08)]">
+          <p className="eyebrow mb-3">The team</p>
+          <div className="space-y-0">
             {members.map(m => (
-              <div key={m.id} className="flex items-center justify-between px-4 py-3">
+              <div
+                key={m.id}
+                className="flex items-center justify-between py-3"
+                style={{ borderBottom: '0.5px solid rgba(243,239,230,0.08)' }}
+              >
                 <div>
-                  <p className="text-[#F0EEE9] text-sm font-medium">
+                  <p className="text-[#F3EFE6] text-sm">
                     {m.display_name}
-                    {m.id === session.member_id && <span className="ml-1.5 text-[10px] text-[#C8902A]">YOU</span>}
+                    {m.id === session.member_id && (
+                      <span className="ml-2 eyebrow text-[#C8902A]">You</span>
+                    )}
                   </p>
-                  {m.role === 'captain' && <p className="text-[10px] text-[#8A8F9E] uppercase tracking-wide">Captain</p>}
+                  {m.role === 'captain' && (
+                    <p className="text-[11px] text-[#8A8473] italic mt-0.5">Captain</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -84,30 +107,39 @@ export default async function ProfilePage() {
         </div>
       )}
 
-      {/* Recent submissions */}
-      {submissions && submissions.length > 0 && (
-        <div className="px-4">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E] mb-2">Completed Missions</p>
-          <div className="space-y-2">
+      {/* Recent completions */}
+      {submissions.length > 0 && (
+        <div className="px-6 py-6 border-t border-[rgba(243,239,230,0.08)]">
+          <p className="eyebrow mb-3">Completed missions</p>
+          <div className="space-y-0">
             {submissions.slice(0, 10).map(s => (
-              <div key={s.id} className="flex items-center justify-between card px-4 py-3">
-                <p className="text-[#F0EEE9] text-sm truncate flex-1">
-                  {(s.missions as unknown as { title: string } | null)?.title ?? 'Mission'}
-                </p>
-                <span className="text-[#C8902A] font-semibold text-sm ml-2">+{s.points_awarded.toLocaleString()}</span>
+              <div
+                key={s.id}
+                className="flex items-baseline justify-between py-3"
+                style={{ borderBottom: '0.5px solid rgba(243,239,230,0.08)' }}
+              >
+                <p className="text-[#F3EFE6] text-sm truncate pr-3">{s.mission_title}</p>
+                <span className="font-display tabular text-[#C8902A] text-[14px] shrink-0" style={{ fontWeight: 400 }}>
+                  +{s.points_awarded.toLocaleString()}
+                </span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Wrapped link */}
-      <div className="px-4">
+      {/* Wrapped link — editorial CTA */}
+      <div className="px-6 pt-8">
         <Link
           href="/wrapped"
-          className="block w-full py-3 text-center rounded-full border border-[rgba(200,144,42,0.40)] text-[#C8902A] font-semibold text-sm hover:bg-[rgba(200,144,42,0.08)] transition-colors"
+          className="group w-full flex items-center justify-between py-4 text-[#F3EFE6]"
+          style={{ borderTop: '0.5px solid rgba(243,239,230,0.15)', borderBottom: '0.5px solid rgba(243,239,230,0.15)' }}
         >
-          View Season Recap →
+          <div>
+            <p className="eyebrow text-[#C8902A]">Season Recap</p>
+            <p className="font-display text-[18px] mt-1" style={{ fontWeight: 400 }}>View your season</p>
+          </div>
+          <span className="text-[#C8902A] text-xl transition-transform group-hover:translate-x-1">→</span>
         </Link>
       </div>
     </div>

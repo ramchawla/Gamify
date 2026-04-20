@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { FEED_POLL_INTERVAL } from '@/lib/constants'
+import { isDemoMode } from '@/lib/mock-data'
 import type { FeedSubmission } from '@/types'
 
 export function useFeedPoll(initialItems: FeedSubmission[]) {
@@ -19,6 +20,7 @@ export function useFeedPoll(initialItems: FeedSubmission[]) {
   }, [])
 
   useEffect(() => {
+    if (isDemoMode()) return
     const id = setInterval(poll, FEED_POLL_INTERVAL)
     return () => clearInterval(id)
   }, [poll])

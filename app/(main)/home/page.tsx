@@ -1,10 +1,10 @@
+import Link from 'next/link'
+import Image from 'next/image'
 import { getServerSession } from '@/lib/session'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getActiveSeason, getTeam, getRankedTeams, getCompletedCount, getMissions } from '@/lib/data'
 import SeasonHeroBanner from '@/components/home/SeasonHeroBanner'
 import PrizeCallout from '@/components/home/PrizeCallout'
-import QuickActionCard from '@/components/home/QuickActionCard'
-import { Target, Rss, Trophy } from 'lucide-react'
-import type { Season, Team } from '@/types'
+import NomaMark from '@/components/shared/NomaMark'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,52 +12,90 @@ export default async function HomePage() {
   const session = await getServerSession()
   if (!session) return null
 
-  const supabase = createAdminClient()
-
-  const [{ data: season }, { data: team }, { data: ranked }, { count: completedCount }] = await Promise.all([
-    supabase.from('seasons').select('*').eq('status', 'active').single(),
-    supabase.from('teams').select('*').eq('id', session.team_id).single(),
-    supabase.from('teams').select('id,total_points').order('total_points', { ascending: false }),
-    supabase.from('submissions').select('id', { count: 'exact', head: true }).eq('team_id', session.team_id),
+  const [season, team, ranked, completedCount, missionsData] = await Promise.all([
+    getActiveSeason(),
+    getTeam(session.team_id),
+    getRankedTeams(session.season_id),
+    getCompletedCount(session.team_id),
+    getMissions('remaining'),
   ])
 
-  if (!season || !team) return <div className="p-4 text-[#8A8F9E]">No active season found.</div>
+  if (!season || !team) return <div className="p-4 text-[#8A8473]">No active season found.</div>
 
-  const rank = (ranked ?? []).findIndex(t => t.id === session.team_id) + 1
+  const rank = ranked.findIndex(t => t.id === session.team_id) + 1
+  const nextMission = missionsData.missions[0] ?? null
+
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   return (
-    <div className="space-y-3 pb-4">
-      <div className="px-4 pt-6 pb-1">
-        <p className="text-[#8A8F9E] text-sm">Welcome back,</p>
-        <h1 className="text-2xl font-bold text-[#F0EEE9]">{session.display_name} 👋</h1>
+    <div className="pb-6">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 pt-5 pb-2">
+        <NomaMark size={14} />
+        <p className="eyebrow">Autumn · 2026</p>
       </div>
 
+      {/* Greeting */}
+      <div className="px-4 pt-4 pb-1 float-in">
+        <p className="text-[#8A8473] text-sm">{greeting},</p>
+        <h1 className="font-display text-[26px] text-[#F3EFE6] leading-tight mt-0.5" style={{ fontWeight: 400 }}>
+          {session.display_name}.
+        </h1>
+      </div>
+
+      {/* Today's Quest — editorial */}
+      {nextMission && (
+        <Link
+          href={`/missions/${nextMission.id}`}
+          className="block mx-4 mt-5 relative rounded-2xl overflow-hidden float-in group"
+          style={{ aspectRatio: '4 / 5' }}
+        >
+          <Image
+            src="/images/hero-adventure.jpg"
+            alt=""
+            fill
+            priority
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 640px"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(10,9,8,0.25) 0%, rgba(10,9,8,0.25) 40%, rgba(10,9,8,0.92) 100%)',
+            }}
+          />
+          <div className="absolute inset-0 p-6 flex flex-col justify-end">
+            <p className="eyebrow text-[#C8902A]">Today&apos;s Quest</p>
+            <h2 className="font-display text-[28px] text-[#F3EFE6] leading-[1.15] mt-2 max-w-[85%]" style={{ fontWeight: 400 }}>
+              {nextMission.title}
+            </h2>
+            <p className="text-[#C6C0B4] text-sm mt-3 leading-relaxed max-w-[85%] line-clamp-2">
+              {nextMission.description}
+            </p>
+            <div className="mt-5 flex items-center justify-between">
+              <p className="font-display text-[#C8902A] tabular" style={{ fontWeight: 400, fontSize: 18 }}>
+                +{nextMission.points.toLocaleString()} pts
+              </p>
+              <span className="text-[#F3EFE6] text-sm flex items-center gap-2 transition-transform group-hover:translate-x-1">
+                Begin <span className="text-[#C8902A]">→</span>
+              </span>
+            </div>
+          </div>
+        </Link>
+      )}
+
+      {/* Team standing */}
       <SeasonHeroBanner
-        team={team as Team}
+        team={team}
         rank={rank}
-        totalTeams={(ranked ?? []).length}
-        missionsCompleted={completedCount ?? 0}
+        totalTeams={ranked.length}
+        missionsCompleted={completedCount}
         totalMissions={season.total_missions}
       />
 
-      <PrizeCallout season={season as Season} />
-
-      <div className="px-4 mt-5">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E] mb-3">Quick Actions</p>
-        <div className="grid grid-cols-3 gap-3">
-          <QuickActionCard href="/missions" label="Missions" sublabel="Earn points" Icon={Target} />
-          <QuickActionCard href="/feed" label="Feed" sublabel="Team activity" Icon={Rss} />
-          <QuickActionCard href="/leaderboard" label="Standings" sublabel="See rankings" Icon={Trophy} />
-        </div>
-      </div>
-
-      <div className="px-4 mt-4">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E] mb-2">Your Join Code</p>
-        <div className="flex items-center gap-3 px-4 py-3 card rounded-xl">
-          <span className="font-mono text-xl font-bold text-[#C8902A] tracking-widest">{team.join_code}</span>
-          <span className="text-[#4A4F61] text-xs">Share with teammates</span>
-        </div>
-      </div>
+      <PrizeCallout season={season} />
     </div>
   )
 }

@@ -6,14 +6,18 @@ interface Props {
 export default function ProgressBar({ completed, total }: Props) {
   const pct = total > 0 ? Math.min(100, (completed / total) * 100) : 0
   return (
-    <div className="space-y-1.5">
-      <div className="flex justify-between text-xs text-[#8A8F9E]">
-        <span>{completed} of {total} missions</span>
-        <span>{Math.round(pct)}%</span>
+    <div className="space-y-2">
+      <div className="flex justify-between items-baseline">
+        <span className="font-display tabular text-[#F3EFE6] text-[14px]" style={{ fontWeight: 400 }}>
+          {completed} <span className="text-[#8A8473]">of {total}</span>
+        </span>
+        <span className="font-display tabular text-[#C8902A] text-[14px]" style={{ fontWeight: 400 }}>
+          {Math.round(pct)}%
+        </span>
       </div>
-      <div className="h-2 rounded-full bg-[rgba(255,255,255,0.08)] overflow-hidden">
+      <div className="h-px bg-[rgba(243,239,230,0.10)] overflow-hidden">
         <div
-          className="h-full rounded-full bg-[#C8902A] transition-all"
+          className="h-full bg-[#C8902A] transition-all duration-700"
           style={{ width: `${pct}%` }}
         />
       </div>

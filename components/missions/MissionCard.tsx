@@ -1,10 +1,8 @@
 import Link from 'next/link'
 import type { Mission } from '@/types'
-import SubmissionTypeIcon from './SubmissionTypeIcon'
 import PointsBadge from './PointsBadge'
-import BonusBadge from './BonusBadge'
 import { cn } from '@/lib/utils'
-import { CheckCircle2, Gem } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 
 interface Props {
   mission: Mission
@@ -17,37 +15,29 @@ export default function MissionCard({ mission, completed, className }: Props) {
     <Link
       href={`/missions/${mission.id}`}
       className={cn(
-        'flex items-start gap-3 p-4 card card-hover float-in',
-        mission.is_hidden_treasure && 'border-[rgba(200,144,42,0.40)] bg-[rgba(200,144,42,0.06)]',
-        completed && 'opacity-60',
+        'group block px-5 py-5 hairline transition-colors hover:bg-[rgba(243,239,230,0.02)]',
+        completed && 'opacity-55',
         className
       )}
     >
-      <SubmissionTypeIcon type={mission.submission_type} size={40} />
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            {mission.is_hidden_treasure && (
-              <Gem size={14} className="text-[#C8902A] shrink-0" />
-            )}
-            <p className="text-[#F0EEE9] font-medium text-[15px] leading-snug truncate">
+      <div className="flex items-start gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[#F3EFE6] text-[17px] leading-tight">
               {mission.title}
-            </p>
+            </h3>
+            {completed && (
+              <CheckCircle2 size={15} className="text-[#8A9B70] shrink-0" strokeWidth={1.5} />
+            )}
           </div>
-          {completed && (
-            <CheckCircle2 size={18} className="text-[#4A7C59] shrink-0" />
-          )}
+          <p className="text-[#8A8473] text-[13px] leading-relaxed mt-1.5 line-clamp-1">
+            {mission.description}
+          </p>
+          <div className="flex items-center gap-3 mt-3">
+            <PointsBadge points={mission.points} size="sm" />
+          </div>
         </div>
-
-        <p className="text-[#8A8F9E] text-sm leading-snug mt-0.5 line-clamp-2">
-          {mission.description}
-        </p>
-
-        <div className="flex items-center gap-2 mt-2 flex-wrap">
-          <PointsBadge points={mission.points} size="sm" />
-          {mission.has_bonus && <BonusBadge description={mission.bonus_description} />}
-        </div>
+        <span className="text-[#4A4540] transition-colors group-hover:text-[#C8902A] mt-1">→</span>
       </div>
     </Link>
   )

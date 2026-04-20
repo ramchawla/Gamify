@@ -1,4 +1,3 @@
-import { Gift } from 'lucide-react'
 import type { Season } from '@/types'
 
 interface Props {
@@ -7,11 +6,17 @@ interface Props {
 
 export default function PrizeCallout({ season }: Props) {
   return (
-    <div className="mx-4 mt-3 px-4 py-3 rounded-xl flex items-center gap-3 bg-[rgba(200,144,42,0.08)] border border-[rgba(200,144,42,0.25)]">
-      <Gift size={20} className="text-[#C8902A] shrink-0" />
-      <div>
-        <p className="text-[#F0EEE9] font-semibold text-sm">{season.prize_description}</p>
-        <p className="text-[#8A8F9E] text-xs">Highest points team wins at season end</p>
+    <div className="mx-4 mt-4 px-5 py-4 rounded-xl relative overflow-hidden" style={{ background: 'rgba(200,144,42,0.06)', border: '0.5px solid rgba(200,144,42,0.22)' }}>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="eyebrow">Grand Prize</p>
+          <p className="font-display text-[22px] text-[#F3EFE6] leading-tight mt-0.5" style={{ fontWeight: 400 }}>
+            {season.prize_description}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[11px] text-[#C6C0B4]">awarded to the leading team at season close</p>
+        </div>
       </div>
     </div>
   )

@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import NomaMark from '@/components/shared/NomaMark'
+import { isDemoMode } from '@/lib/mock-data'
 
 type Mode = 'create' | 'join'
 
@@ -12,26 +15,27 @@ export default function JoinPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Create team fields
-  const [teamName, setTeamName]       = useState('')
+  const [teamName, setTeamName] = useState('')
   const [captainName, setCaptainName] = useState('')
-  const [email, setEmail]             = useState('')
-  const [booking, setBooking]         = useState('')
+  const [email, setEmail] = useState('')
 
-  // Join fields
-  const [joinCode, setJoinCode]       = useState('')
+  const [joinCode, setJoinCode] = useState('')
   const [displayName, setDisplayName] = useState('')
-  const [joinEmail, setJoinEmail]     = useState('')
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
+    if (isDemoMode()) {
+      await new Promise(r => setTimeout(r, 600))
+      router.push('/home')
+      return
+    }
     try {
       const res = await fetch('/api/teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ team_name: teamName, captain_name: captainName, captain_email: email, booking_number: booking || null }),
+        body: JSON.stringify({ team_name: teamName, captain_name: captainName, captain_email: email }),
       })
       const json = await res.json()
       if (!res.ok) { setError(json.error ?? 'Something went wrong'); return }
@@ -47,11 +51,16 @@ export default function JoinPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    if (isDemoMode()) {
+      await new Promise(r => setTimeout(r, 600))
+      router.push('/home')
+      return
+    }
     try {
       const res = await fetch('/api/teams/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ join_code: joinCode, display_name: displayName, email: joinEmail || null }),
+        body: JSON.stringify({ join_code: joinCode, display_name: displayName }),
       })
       const json = await res.json()
       if (!res.ok) { setError(json.error ?? 'Something went wrong'); return }
@@ -64,55 +73,88 @@ export default function JoinPage() {
   }
 
   return (
-    <div className="min-h-svh flex flex-col items-center justify-center px-5 py-10 bg-[#0D0D0F]">
-      <div className="w-full max-w-sm space-y-8">
-        {/* Logo / Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-[#F0EEE9]">Noma Resorts</h1>
-          <p className="text-[#8A8F9E] text-sm">$10K Challenge · Join your team</p>
+    <div className="relative min-h-svh overflow-hidden">
+      {/* Hero imagery */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/images/hero-campfire.png"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.60) 40%, rgba(10,9,8,0.92) 100%)',
+          }}
+        />
+      </div>
+
+      <div className="relative min-h-svh flex flex-col px-6 safe-top pb-10">
+        {/* Wordmark */}
+        <header className="pt-10 pb-4 flex items-center justify-center">
+          <NomaMark size={18} />
+        </header>
+
+        {/* Spacer for imagery */}
+        <div className="flex-1 min-h-[18vh]" />
+
+        {/* Headline */}
+        <div className="float-in mb-8">
+          <p className="eyebrow mb-3">The $10,000 Challenge</p>
+          <h1 className="font-display text-[40px] leading-[1.05] text-[#F3EFE6]" style={{ fontWeight: 400 }}>
+            A season of<br />
+            <span style={{ fontWeight: 400, fontStyle: 'italic' }}>quiet adventure.</span>
+          </h1>
+          <p className="mt-4 text-[#C6C0B4] text-[15px] leading-relaxed max-w-sm">
+            Gather your team. Complete missions across the property and the Sierra.
+            The most attentive team wins $10,000.
+          </p>
         </div>
 
-        {/* Mode toggle */}
-        <div className="flex p-1 rounded-full bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)]">
+        {/* Mode switch — underline links, not pills */}
+        <div className="flex items-center gap-6 mb-7 border-b border-[rgba(243,239,230,0.08)]">
           {(['create', 'join'] as Mode[]).map(m => (
             <button
               key={m}
-              onClick={() => setMode(m)}
+              onClick={() => { setMode(m); setError('') }}
               className={cn(
-                'flex-1 py-2 rounded-full text-sm font-medium transition-all',
-                mode === m ? 'bg-[#C8902A] text-[#0D0D0F]' : 'text-[#8A8F9E]'
+                'relative pb-3 text-sm font-medium transition-colors',
+                mode === m ? 'text-[#F3EFE6]' : 'text-[#8A8473] hover:text-[#C6C0B4]'
               )}
             >
-              {m === 'create' ? 'Create Team' : 'Join Team'}
+              {m === 'create' ? 'Create a team' : 'Join a team'}
+              <span
+                className={cn(
+                  'absolute left-0 right-0 -bottom-px h-px bg-[#C8902A] transition-opacity',
+                  mode === m ? 'opacity-100' : 'opacity-0'
+                )}
+              />
             </button>
           ))}
         </div>
 
-        {/* Error */}
         {error && (
-          <div className="px-4 py-3 rounded-xl bg-[rgba(248,113,113,0.10)] border border-[rgba(248,113,113,0.30)]">
-            <p className="text-[#F87171] text-sm">{error}</p>
+          <div className="mb-4 px-4 py-3 rounded-xl bg-[rgba(200,116,97,0.10)] border border-[rgba(200,116,97,0.30)]">
+            <p className="text-[#C87461] text-sm">{error}</p>
           </div>
         )}
 
-        {/* Create form */}
-        {mode === 'create' && (
-          <form onSubmit={handleCreate} className="space-y-4">
-            <Field label="Team Name" value={teamName} onChange={setTeamName} placeholder="The Explorers" required />
-            <Field label="Your Name" value={captainName} onChange={setCaptainName} placeholder="Alex Johnson" required />
-            <Field label="Email" value={email} onChange={setEmail} placeholder="alex@example.com" type="email" required />
-            <Field label="Booking Number (optional)" value={booking} onChange={setBooking} placeholder="NOM-12345" />
-            <SubmitBtn loading={loading} label="Create Team" />
+        {mode === 'create' ? (
+          <form onSubmit={handleCreate} className="space-y-5 stagger">
+            <EditorialField label="Team name" value={teamName} onChange={setTeamName} placeholder="The Explorers" required />
+            <EditorialField label="Your name" value={captainName} onChange={setCaptainName} placeholder="Alex Johnson" required />
+            <EditorialField label="Email" value={email} onChange={setEmail} placeholder="alex@example.com" type="email" required />
+            <SubmitLink loading={loading} label="Begin the Challenge" />
           </form>
-        )}
-
-        {/* Join form */}
-        {mode === 'join' && (
-          <form onSubmit={handleJoin} className="space-y-4">
-            <Field label="Join Code" value={joinCode} onChange={v => setJoinCode(v.toUpperCase())} placeholder="ABC123" required />
-            <Field label="Your Name" value={displayName} onChange={setDisplayName} placeholder="Alex Johnson" required />
-            <Field label="Email (optional)" value={joinEmail} onChange={setJoinEmail} placeholder="alex@example.com" type="email" />
-            <SubmitBtn loading={loading} label="Join Team" />
+        ) : (
+          <form onSubmit={handleJoin} className="space-y-5 stagger">
+            <EditorialField label="Team code" value={joinCode} onChange={v => setJoinCode(v.toUpperCase())} placeholder="EXPL26" required />
+            <EditorialField label="Your name" value={displayName} onChange={setDisplayName} placeholder="Alex Johnson" required />
+            <SubmitLink loading={loading} label="Join Your Team" />
           </form>
         )}
       </div>
@@ -120,33 +162,37 @@ export default function JoinPage() {
   )
 }
 
-function Field({ label, value, onChange, placeholder, type = 'text', required }: {
+function EditorialField({ label, value, onChange, placeholder, type = 'text', required }: {
   label: string; value: string; onChange: (v: string) => void
   placeholder?: string; type?: string; required?: boolean
 }) {
   return (
-    <div className="space-y-1.5">
-      <label className="text-[11px] font-medium uppercase tracking-widest text-[#8A8F9E]">{label}</label>
+    <div>
+      <label className="eyebrow block mb-1">{label}</label>
       <input
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full h-12 px-4 rounded-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.10)] text-[#F0EEE9] placeholder:text-[#4A4F61] focus:outline-none focus:border-[rgba(200,144,42,0.50)] transition-colors text-sm"
+        className="input-editorial"
       />
     </div>
   )
 }
 
-function SubmitBtn({ loading, label }: { loading: boolean; label: string }) {
+function SubmitLink({ loading, label }: { loading: boolean; label: string }) {
   return (
     <button
       type="submit"
       disabled={loading}
-      className="w-full h-12 rounded-full bg-[#C8902A] text-[#0D0D0F] font-semibold text-base hover:bg-[#EAB308] transition-colors disabled:opacity-50 mt-2"
+      className="group mt-4 w-full flex items-center justify-between py-3.5 text-left text-[#F3EFE6] disabled:opacity-50"
+      style={{ borderTop: '0.5px solid rgba(243,239,230,0.15)', borderBottom: '0.5px solid rgba(243,239,230,0.15)' }}
     >
-      {loading ? 'Loading…' : label}
+      <span className="font-display text-[22px]" style={{ fontWeight: 400 }}>
+        {loading ? 'One moment…' : label}
+      </span>
+      <span className="text-[#C8902A] text-xl transition-transform group-hover:translate-x-1">→</span>
     </button>
   )
 }

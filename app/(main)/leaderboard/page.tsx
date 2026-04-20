@@ -1,5 +1,5 @@
 import { getServerSession } from '@/lib/session'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getRankedTeams } from '@/lib/data'
 import LeaderboardClient from './LeaderboardClient'
 
 export const dynamic = 'force-dynamic'
@@ -8,20 +8,17 @@ export default async function LeaderboardPage() {
   const session = await getServerSession()
   if (!session) return null
 
-  const supabase = createAdminClient()
-  const { data: teams } = await supabase
-    .from('teams')
-    .select('id,season_id,name,photo_url,total_points,join_code,created_at,captain_email,booking_number')
-    .eq('season_id', session.season_id)
-    .order('total_points', { ascending: false })
+  const teams = await getRankedTeams(session.season_id)
 
   return (
     <div className="pb-4">
-      <div className="px-4 pt-6 pb-2">
-        <h1 className="text-2xl font-bold text-[#F0EEE9]">Leaderboard</h1>
-        <p className="text-[#8A8F9E] text-sm mt-1">Updated every 30 seconds</p>
+      <div className="px-5 pt-8 pb-2">
+        <p className="eyebrow">The Season</p>
+        <h1 className="font-display text-[28px] text-[#F3EFE6] mt-1 leading-tight" style={{ fontWeight: 400 }}>
+          Standings
+        </h1>
       </div>
-      <LeaderboardClient initialTeams={teams ?? []} myTeamId={session.team_id} />
+      <LeaderboardClient initialTeams={teams} myTeamId={session.team_id} />
     </div>
   )
 }

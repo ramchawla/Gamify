@@ -14,14 +14,16 @@ export default function FeedClient({ initialItems, myMemberId }: Props) {
 
   if (!items.length) {
     return (
-      <div className="px-4 py-12 text-center text-[#8A8F9E]">
-        No submissions yet. Complete a mission to be the first!
+      <div className="px-6 py-16 text-center">
+        <p className="text-[#8A8473] text-sm italic">
+          The field notes are empty. Be the first to write one.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="px-4 space-y-4 stagger">
+    <div className="stagger">
       {items.map(item => (
         <FeedCard key={item.id} submission={item} myMemberId={myMemberId} />
       ))}

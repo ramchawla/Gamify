@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { LEADERBOARD_POLL_INTERVAL } from '@/lib/constants'
+import { isDemoMode } from '@/lib/mock-data'
 import type { Team } from '@/types'
 
 export function useLeaderboardPoll(initialTeams: Team[]) {
@@ -19,6 +20,7 @@ export function useLeaderboardPoll(initialTeams: Team[]) {
   }, [])
 
   useEffect(() => {
+    if (isDemoMode()) return
     const id = setInterval(poll, LEADERBOARD_POLL_INTERVAL)
     return () => clearInterval(id)
   }, [poll])

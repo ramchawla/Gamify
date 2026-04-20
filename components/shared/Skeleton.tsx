@@ -6,22 +6,16 @@ interface Props {
 
 export default function Skeleton({ className }: Props) {
   return (
-    <div className={cn('rounded-lg bg-[rgba(255,255,255,0.06)] shimmer', className)} />
+    <div className={cn('rounded-md bg-[rgba(243,239,230,0.04)] pulse-soft', className)} />
   )
 }
 
 export function SkeletonCard({ className }: Props) {
   return (
-    <div className={cn('card p-4 space-y-3', className)}>
-      <div className="flex items-center gap-3">
-        <Skeleton className="w-10 h-10 rounded-full" />
-        <div className="flex-1 space-y-2">
-          <Skeleton className="h-3.5 w-3/4" />
-          <Skeleton className="h-3 w-1/2" />
-        </div>
-      </div>
+    <div className={cn('px-5 py-5 space-y-3 hairline', className)}>
+      <Skeleton className="h-4 w-2/3" />
       <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-3 w-4/5" />
+      <Skeleton className="h-3 w-1/3" />
     </div>
   )
 }

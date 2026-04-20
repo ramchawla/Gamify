@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CheckCircle2, Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
@@ -17,49 +16,56 @@ export default function ConfirmationScreen({ points, newRank, prevRank, missionT
   const rankImproved = prevRank && newRank && newRank < prevRank
 
   useEffect(() => {
-    const t = setTimeout(() => setShow(true), 50)
+    const t = setTimeout(() => setShow(true), 60)
     return () => clearTimeout(t)
   }, [])
 
   return (
     <div className={cn(
-      'fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0D0D0F] px-6 transition-opacity duration-500',
-      show ? 'opacity-100' : 'opacity-0'
+      'fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0A0908] px-6 transition-opacity',
+      show ? 'opacity-100 duration-700' : 'opacity-0 duration-0'
     )}>
-      <div className="flex flex-col items-center gap-6 text-center">
-        <CheckCircle2 size={64} className="text-[#4A7C59]" strokeWidth={1.5} />
+      {/* Radial gold glow */}
+      <div className="absolute inset-0 pointer-events-none glow-gold" aria-hidden />
 
-        <div>
-          <p className="text-[#8A8F9E] text-sm uppercase tracking-widest mb-1">Mission Complete</p>
-          <h1 className="text-2xl font-bold text-[#F0EEE9]">{missionTitle}</h1>
-        </div>
+      <div className="relative flex flex-col items-center gap-6 text-center max-w-sm">
+        <p className="eyebrow text-[#C8902A]">Mission Complete</p>
+        <h1 className="font-display text-[24px] text-[#F3EFE6] leading-tight px-4" style={{ fontWeight: 400 }}>
+          {missionTitle}
+        </h1>
 
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-5xl font-bold text-[#C8902A]">+{points.toLocaleString()}</span>
-          <span className="text-[#8A8F9E] text-sm">points earned</span>
+        <div className="count-reveal my-4">
+          <p className="font-display tabular text-[#C8902A] leading-none" style={{ fontSize: 72, fontWeight: 400 }}>
+            +{points.toLocaleString()}
+          </p>
+          <p className="eyebrow mt-3">points earned</p>
         </div>
 
         {rankImproved && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[rgba(200,144,42,0.12)] border border-[rgba(200,144,42,0.40)]">
-            <Trophy size={16} className="text-[#C8902A]" />
-            <span className="text-sm font-medium text-[#C8902A]">
-              Moved up to #{newRank}!
-            </span>
-          </div>
+          <p className="text-[#C6C0B4] text-sm italic">
+            You&apos;ve moved up to <span className="text-[#C8902A] not-italic font-medium">#{newRank}</span>.
+          </p>
         )}
 
-        <div className="flex flex-col gap-3 w-full mt-4">
+        <p className="text-[#8A8473] text-sm px-8 leading-relaxed">
+          Well done, {' '}
+          <span className="text-[#F3EFE6]">The Explorers</span>.
+        </p>
+
+        <div className="flex flex-col gap-3 w-full mt-6">
           <Link
             href="/missions"
-            className="w-full h-12 rounded-full bg-[#C8902A] text-[#0D0D0F] font-semibold flex items-center justify-center hover:bg-[#EAB308] transition-colors"
+            className="group w-full flex items-center justify-between py-4 text-[#F3EFE6]"
+            style={{ borderTop: '0.5px solid rgba(243,239,230,0.15)', borderBottom: '0.5px solid rgba(243,239,230,0.15)' }}
           >
-            Next Mission
+            <span className="font-display text-[18px]" style={{ fontWeight: 400 }}>Next mission</span>
+            <span className="text-[#C8902A] text-xl transition-transform group-hover:translate-x-1">→</span>
           </Link>
           <Link
             href="/feed"
-            className="w-full h-12 rounded-full border border-[rgba(255,255,255,0.12)] text-[#F0EEE9] font-medium flex items-center justify-center hover:border-[rgba(255,255,255,0.25)] transition-colors"
+            className="w-full text-center py-3 text-[#8A8473] text-sm hover:text-[#C6C0B4] transition-colors"
           >
-            View Feed
+            View the feed
           </Link>
         </div>
       </div>

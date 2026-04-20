@@ -1,4 +1,3 @@
-import { CheckCircle2, Circle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -12,20 +11,22 @@ export default function MilestoneRow({ threshold, completedCount, totalMissions 
   const reached = completedCount >= targetCount
 
   return (
-    <div className={cn(
-      'flex items-center gap-3 py-2.5',
-      reached ? 'opacity-100' : 'opacity-50'
-    )}>
-      {reached
-        ? <CheckCircle2 size={20} className="text-[#4A7C59] shrink-0" />
-        : <Circle size={20} className="text-[#4A4F61] shrink-0" />
-      }
-      <span className="text-sm text-[#F0EEE9]">
-        {threshold}% Complete — {targetCount} missions
+    <div
+      className="flex items-baseline gap-3 py-3"
+      style={{ borderBottom: '0.5px solid rgba(243,239,230,0.08)' }}
+    >
+      <span
+        className={cn(
+          'w-1 h-1 rounded-full shrink-0',
+          reached ? 'bg-[#C8902A]' : 'bg-[rgba(243,239,230,0.18)]'
+        )}
+      />
+      <span className={cn('text-sm flex-1', reached ? 'text-[#F3EFE6]' : 'text-[#8A8473]')}>
+        {threshold}% complete
       </span>
-      {reached && (
-        <span className="ml-auto text-[11px] text-[#4A7C59] font-medium uppercase tracking-wide">Reached</span>
-      )}
+      <span className={cn('font-display tabular text-[13px]', reached ? 'text-[#C8902A]' : 'text-[#8A8473]')} style={{ fontWeight: 400 }}>
+        {targetCount} missions
+      </span>
     </div>
   )
 }

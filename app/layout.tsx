@@ -1,16 +1,28 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter_Tight, Fraunces } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const interTight = Inter_Tight({
+  subsets: ['latin'],
+  variable: '--font-inter-tight',
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
+  axes: ['SOFT', 'opsz'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'Noma Resorts $10K Challenge',
-  description: 'Complete missions, earn points, win $10,000.',
+  title: 'Noma Resorts · The $10K Challenge',
+  description: 'A season of adventure. Complete missions with your team. Win extraordinary.',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0D0D0F',
+  themeColor: '#0A0908',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -18,8 +30,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body className="bg-[#0D0D0F] text-[#F0EEE9] antialiased">
+    <html lang="en" className={`${interTight.variable} ${fraunces.variable}`}>
+      <body className="bg-[#0A0908] text-[#F3EFE6] antialiased">
         {children}
       </body>
     </html>

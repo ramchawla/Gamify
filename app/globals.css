@@ -1,36 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  /* Background layers */
-  --color-base: #0D0D0F;
-  --color-surface: #1A1F2E;
+  /* Warm dark foundation (all cool/blue hex retired) */
+  --color-base: #0A0908;
+  --color-surface: #181410;
+  --color-surface-2: #221E19;
 
-  /* Text */
-  --color-primary: #F0EEE9;
-  --color-secondary: #8A8F9E;
-  --color-muted: #4A4F61;
+  /* Text — warm neutrals */
+  --color-primary: #F3EFE6;
+  --color-secondary: #8A8473;
+  --color-muted: #4A4540;
 
-  /* Gold accent */
+  /* Accents — refined */
   --color-gold-400: #EAB308;
   --color-gold-500: #C8902A;
   --color-gold-600: #A67420;
   --color-gold-tint: rgba(200, 144, 42, 0.12);
+  --color-gold-soft: rgba(200, 144, 42, 0.06);
 
-  /* Green accent */
   --color-green-500: #4A7C59;
   --color-green-tint: rgba(74, 124, 89, 0.10);
 
-  /* Submission type icons */
+  /* Submission type accents (warm-shifted) */
   --color-icon-photo: #C8902A;
-  --color-icon-text: #4A7C59;
-  --color-icon-video: #7F77DD;
-  --color-icon-location: #60A5FA;
+  --color-icon-text: #8A9B70;
+  --color-icon-video: #B89973;
+  --color-icon-location: #C8902A;
 
   /* Semantic */
-  --color-error-text: #F87171;
-  --color-error-bg: rgba(248, 113, 113, 0.10);
+  --color-error-text: #C87461;
+  --color-error-bg: rgba(200, 116, 97, 0.10);
 
-  /* Border radius */
+  /* Typography */
+  --font-display: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+  --font-ui: var(--font-inter-tight), 'Inter', -apple-system, sans-serif;
+
+  /* Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
@@ -38,13 +43,12 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* Motion durations */
+  /* Motion */
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --duration-slow: 400ms;
   --duration-cinematic: 600ms;
 
-  /* Easing */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
@@ -54,31 +58,55 @@
   color-scheme: dark;
 }
 
+html, body {
+  background-color: #0A0908;
+  color: #F3EFE6;
+}
+
 body {
-  background-color: #0D0D0F;
-  color: #F0EEE9;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-ui);
+  font-feature-settings: 'ss01', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Display serif — used sparingly */
+.font-display {
+  font-family: var(--font-display);
+  font-feature-settings: 'ss01', 'ss02';
+  font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 144;
+  letter-spacing: -0.01em;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Eyebrow — section labels only */
+.eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+::-webkit-scrollbar-thumb { background: rgba(243, 239, 230, 0.10); border-radius: 9999px; }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255,255,255,0.04);
-  border: 0.5px solid rgba(255,255,255,0.10);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Card surface — warm, no blue */
+.card {
+  background-color: #181410;
+  border: 0.5px solid rgba(243, 239, 230, 0.07);
+  border-radius: 16px;
 }
 
-/* Standard card */
-.card {
-  background-color: #1A1F2E;
-  border: 0.5px solid rgba(255,255,255,0.08);
+.card-raised {
+  background-color: #221E19;
+  border: 0.5px solid rgba(243, 239, 230, 0.08);
   border-radius: 16px;
 }
 
@@ -86,30 +114,33 @@ body {
   transition: border-color var(--duration-fast) var(--ease-standard);
 }
 .card-hover:hover {
-  border-color: rgba(255,255,255,0.16);
+  border-color: rgba(243, 239, 230, 0.14);
 }
 
-/* Gold tint card (user's leaderboard row, etc.) */
 .card-gold {
-  background-color: rgba(200,144,42,0.12);
-  border: 1px solid rgba(200,144,42,0.40);
+  background-color: rgba(200, 144, 42, 0.10);
+  border: 1px solid rgba(200, 144, 42, 0.35);
+  border-radius: 16px;
 }
 
-/* Shimmer animation */
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+.hairline {
+  border-bottom: 0.5px solid rgba(243, 239, 230, 0.08);
 }
 
-.shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s linear infinite;
+/* Subtle film-grain overlay — adds warmth on dark backgrounds */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.06;
+  mix-blend-mode: overlay;
 }
 
-/* Float-in animation */
+/* Cinematic fade-in */
 @keyframes float-in {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -126,6 +157,27 @@ body {
 .stagger > *:nth-child(6) { animation-delay: 300ms; }
 .stagger > *:nth-child(n+7) { animation-delay: 360ms; }
 
+/* Skeleton pulse — subtler than shimmer */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.85; }
+}
+.pulse-soft { animation: pulse-soft 1.8s var(--ease-cinematic) infinite; }
+
+/* Count-up — used on ConfirmationScreen */
+@keyframes count-fade {
+  from { opacity: 0; transform: scale(0.92); filter: blur(4px); }
+  to   { opacity: 1; transform: scale(1);    filter: blur(0); }
+}
+.count-reveal {
+  animation: count-fade var(--duration-cinematic) var(--ease-cinematic) both;
+}
+
+/* Radial gold glow — for confirmation background */
+.glow-gold {
+  background: radial-gradient(circle at center, rgba(200,144,42,0.18) 0%, transparent 62%);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -137,3 +189,21 @@ body {
 /* Safe area padding for mobile */
 .safe-top    { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Editorial bottom-border input */
+.input-editorial {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(243, 239, 230, 0.22);
+  border-radius: 0;
+  padding: 10px 2px;
+  width: 100%;
+  color: #F3EFE6;
+  font-size: 16px;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.input-editorial::placeholder { color: rgba(243, 239, 230, 0.35); }
+.input-editorial:focus {
+  outline: none;
+  border-bottom-color: #C8902A;
+}

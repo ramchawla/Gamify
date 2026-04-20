@@ -1,42 +1,52 @@
 import TeamAvatar from '@/components/shared/TeamAvatar'
+import Laurel from '@/components/shared/Laurel'
 import type { Team } from '@/types'
 
 interface Props {
-  teams: Team[]  // top 3, in order 1st, 2nd, 3rd
+  teams: Team[]
 }
 
-const podiumOrder = [1, 0, 2] // visual: 2nd left, 1st center, 3rd right
-const heights = ['h-20', 'h-28', 'h-14']
-const medals  = ['🥈', '🥇', '🥉']
-const labelColors = ['#8A8F9E', '#EAB308', '#C8902A']
+const order = [1, 0, 2] // visual: 2nd left, 1st center, 3rd right
 
 export default function LeaderboardPodium({ teams }: Props) {
   const top3 = teams.slice(0, 3)
   if (top3.length < 1) return null
 
   return (
-    <div className="flex items-end justify-center gap-2 px-4 py-6">
-      {podiumOrder.map((dataIdx, visIdx) => {
+    <div className="flex items-end justify-center gap-6 px-4 pt-8 pb-10">
+      {order.map((dataIdx, visIdx) => {
         const team = top3[dataIdx]
-        if (!team) return <div key={visIdx} className="w-24" />
+        if (!team) return <div key={visIdx} className="w-20" />
         const rank = dataIdx + 1
+        const isFirst = rank === 1
+        const avatarSize = isFirst ? 64 : 48
 
         return (
           <div key={team.id} className="flex flex-col items-center gap-2 w-24">
-            <span className="text-xl">{medals[visIdx]}</span>
-            <TeamAvatar name={team.name} photoUrl={team.photo_url} size={48} />
-            <p className="text-[#F0EEE9] text-xs font-medium text-center leading-tight line-clamp-2">
+            <div className="relative flex items-center justify-center" style={{ width: 120, height: 110 }}>
+              {isFirst && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Laurel size={118} />
+                </div>
+              )}
+              <TeamAvatar name={team.name} size={avatarSize} />
+            </div>
+            <p
+              className="font-display tabular leading-none"
+              style={{
+                fontSize: isFirst ? 36 : 26,
+                fontWeight: 400,
+                color: isFirst ? '#C8902A' : '#8A8473',
+              }}
+            >
+              {rank}
+            </p>
+            <p className="text-[#F3EFE6] text-xs font-medium text-center leading-tight line-clamp-2 max-w-[110px]">
               {team.name}
             </p>
-            <p className="text-[10px] text-[#C8902A] font-semibold">{team.total_points.toLocaleString()} pts</p>
-            <div
-              className={`${heights[visIdx]} w-full rounded-t-xl flex items-center justify-center`}
-              style={{ background: rank === 1 ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.05)', borderTop: `1px solid ${labelColors[visIdx]}33` }}
-            >
-              <span className="text-lg font-bold" style={{ color: labelColors[visIdx] }}>
-                {rank}
-              </span>
-            </div>
+            <p className="text-[11px] text-[#8A8473] tabular">
+              {team.total_points.toLocaleString()}
+            </p>
           </div>
         )
       })}

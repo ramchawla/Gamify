@@ -10,12 +10,13 @@ export default function PointsBadge({ points, className, size = 'md' }: Props) {
   return (
     <span
       className={cn(
-        'font-semibold text-[#C8902A] rounded-full border border-[rgba(200,144,42,0.30)] bg-[rgba(200,144,42,0.10)]',
-        size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-sm px-2.5 py-1',
+        'font-display tabular text-[#C8902A] leading-none',
+        size === 'sm' ? 'text-[13px]' : 'text-[15px]',
         className
       )}
+      style={{ fontWeight: 400 }}
     >
-      {points.toLocaleString()} pts
+      +{points.toLocaleString()} <span className="eyebrow !text-[9px] !ml-0.5 !tracking-[0.18em] text-[#8A8473] font-normal">pts</span>
     </span>
   )
 }

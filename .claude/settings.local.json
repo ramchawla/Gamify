@@ -7,7 +7,10 @@
       "Bash(cp /Users/ramchawla/Downloads/files/01_schema.sql /Users/ramchawla/Desktop/coding/gamify/supabase/migrations/001_initial.sql)",
       "Bash(cp /Users/ramchawla/Downloads/files/02_seed.sql /Users/ramchawla/Desktop/coding/gamify/supabase/seed.sql)",
       "Bash(npx tsc *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Read(//Users/ramchawla/.claude/**)",
+      "WebFetch(domain:jeskojets.com)",
+      "WebFetch(domain:landonorris.com)"
     ]
   }
 }

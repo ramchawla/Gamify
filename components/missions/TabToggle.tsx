@@ -11,29 +11,29 @@ interface Props {
 
 export default function TabToggle({ active, onToggle, remainingCount, completedCount }: Props) {
   return (
-    <div className="flex gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)]">
+    <div className="flex items-center gap-7 border-b border-[rgba(243,239,230,0.08)]">
       {(['remaining', 'completed'] as const).map((tab) => {
         const count = tab === 'remaining' ? remainingCount : completedCount
+        const label = tab === 'remaining' ? 'Remaining' : 'Completed'
         return (
           <button
             key={tab}
             onClick={() => onToggle(tab)}
             className={cn(
-              'flex-1 py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150',
-              active === tab
-                ? 'bg-[#C8902A] text-[#0D0D0F]'
-                : 'text-[#8A8F9E] hover:text-[#F0EEE9]'
+              'relative pb-3 flex items-baseline gap-2 text-sm transition-colors',
+              active === tab ? 'text-[#F3EFE6] font-medium' : 'text-[#8A8473] hover:text-[#C6C0B4]'
             )}
           >
-            {tab === 'remaining' ? 'Remaining' : 'Completed'}
+            {label}
             {count !== undefined && (
-              <span className={cn(
-                'ml-1.5 text-xs',
-                active === tab ? 'text-[rgba(13,13,15,0.7)]' : 'text-[#4A4F61]'
-              )}>
-                {count}
-              </span>
+              <span className="text-[11px] text-[#4A4540] tabular">{count}</span>
             )}
+            <span
+              className={cn(
+                'absolute left-0 right-0 -bottom-px h-px bg-[#C8902A] transition-opacity',
+                active === tab ? 'opacity-100' : 'opacity-0'
+              )}
+            />
           </button>
         )
       })}
