@@ -4,6 +4,7 @@ import { getServerSession } from '@/lib/session'
 import { getActiveSeason, getTeam, getRankedTeams, getCompletedCount, getMissions } from '@/lib/data'
 import SeasonHeroBanner from '@/components/home/SeasonHeroBanner'
 import PrizeCallout from '@/components/home/PrizeCallout'
+import GlobeHero from '@/components/home/GlobeHero'
 import NomaMark from '@/components/shared/NomaMark'
 
 export const dynamic = 'force-dynamic'
@@ -30,14 +31,17 @@ export default async function HomePage() {
 
   return (
     <div className="pb-6">
+      {/* Globe hero */}
+      <GlobeHero />
+
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 pt-5 pb-2">
+      <div className="flex items-center justify-between px-4 pt-3 pb-2">
         <NomaMark size={14} />
         <p className="eyebrow">Autumn · 2026</p>
       </div>
 
       {/* Greeting */}
-      <div className="px-4 pt-4 pb-1 float-in">
+      <div className="px-4 pt-2 pb-1 float-in">
         <p className="text-[#8A8473] text-sm">{greeting},</p>
         <h1 className="font-display text-[26px] text-[#F3EFE6] leading-tight mt-0.5" style={{ fontWeight: 400 }}>
           {session.display_name}.
