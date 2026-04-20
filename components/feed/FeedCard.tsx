@@ -12,6 +12,11 @@ interface Props {
   myMemberId?: string
 }
 
+function teamColor(photoUrl: string | null | undefined): string {
+  if (photoUrl?.startsWith('color:')) return photoUrl.slice(6)
+  return '#C8902A'
+}
+
 export default function FeedCard({ submission, myMemberId: _myMemberId }: Props) {
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(submission.like_count)
@@ -28,36 +33,19 @@ export default function FeedCard({ submission, myMemberId: _myMemberId }: Props)
     })
   }
 
+  const color = teamColor(submission.teams?.photo_url)
+
   return (
-    <article className="float-in border-b border-[rgba(243,239,230,0.08)] py-7 px-6">
-      {/* Byline */}
-      <div className="flex items-baseline justify-between gap-3 mb-4">
-        <div className="min-w-0">
-          <p className="eyebrow truncate">
-            {submission.teams?.name ?? 'Team'}
-          </p>
-          <p className="text-[#8A8473] text-[11px] mt-1">
-            {submission.team_members?.display_name ?? 'A guest'} · {timeAgo(submission.submitted_at)}
-          </p>
-        </div>
-        <span className="font-display tabular text-[#C8902A] text-[14px] shrink-0" style={{ fontWeight: 400 }}>
-          +{submission.points_awarded.toLocaleString()}
-        </span>
-      </div>
-
-      {/* Mission title — serif, the headline of the note */}
-      {submission.missions && (
-        <h3 className="font-display text-[#F3EFE6] text-[20px] leading-snug mb-4" style={{ fontWeight: 400 }}>
-          {submission.missions.title}
-        </h3>
-      )}
-
-      {/* Photo */}
+    <article
+      className="float-in"
+      style={{ borderBottom: '0.5px solid rgba(243,239,230,0.09)' }}
+    >
+      {/* Photo — full bleed, fixed 4:3 aspect, no distortion */}
       {submission.media_url && (
-        <div className="relative w-full aspect-[4/3] overflow-hidden rounded-sm mb-4">
+        <div className="relative w-full" style={{ aspectRatio: '4/3' }}>
           <Image
             src={submission.media_url}
-            alt={submission.caption ?? 'Submission photo'}
+            alt={submission.caption ?? ''}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 640px"
@@ -65,34 +53,78 @@ export default function FeedCard({ submission, myMemberId: _myMemberId }: Props)
         </div>
       )}
 
-      {/* Text response */}
-      {submission.text_response && !submission.media_url && (
-        <p className="text-[#C6C0B4] text-[15px] leading-relaxed italic font-display mb-4" style={{ fontWeight: 400 }}>
-          &ldquo;{submission.text_response}&rdquo;
-        </p>
-      )}
+      {/* Content block */}
+      <div className="px-5 pt-4 pb-5 space-y-3">
+        {/* Mission title — the story headline */}
+        {submission.missions && (
+          <h3
+            className="font-display text-[#F3EFE6] leading-snug"
+            style={{ fontSize: 20, fontWeight: 400 }}
+          >
+            {submission.missions.title}
+          </h3>
+        )}
 
-      {/* Caption */}
-      {submission.caption && (
-        <p className="text-[#C6C0B4] text-[14px] leading-relaxed italic">
-          &ldquo;{submission.caption}&rdquo;
-        </p>
-      )}
+        {/* Caption — italic, secondary */}
+        {submission.caption && (
+          <p className="text-[#8A8473] text-[14px] leading-relaxed italic">
+            &ldquo;{submission.caption}&rdquo;
+          </p>
+        )}
 
-      {/* Like row — minimal, right-aligned */}
-      <div className="mt-4 flex justify-end">
-        <button
-          onClick={toggleLike}
-          className="flex items-center gap-1.5 text-xs text-[#8A8473] transition-colors"
-          aria-label={liked ? 'Unlike' : 'Like'}
-        >
-          <Heart
-            size={14}
-            strokeWidth={1.5}
-            className={cn('transition-all', liked ? 'text-[#C8902A] fill-[#C8902A]' : '')}
-          />
-          <span className={cn('tabular', liked && 'text-[#C8902A]')}>{likeCount}</span>
-        </button>
+        {/* Text-only response */}
+        {submission.text_response && !submission.media_url && (
+          <p
+            className="font-display text-[#C6C0B4] leading-relaxed italic"
+            style={{ fontSize: 17, fontWeight: 400 }}
+          >
+            &ldquo;{submission.text_response}&rdquo;
+          </p>
+        )}
+
+        {/* Byline row */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ background: color }}
+            />
+            <div>
+              <p className="text-[#C6C0B4] text-[12px] leading-none">
+                {submission.teams?.name ?? 'Team'}
+                <span className="text-[#4A4540] mx-1.5">·</span>
+                {submission.team_members?.display_name ?? 'Guest'}
+              </p>
+              <p className="text-[#4A4540] text-[11px] mt-0.5">
+                {timeAgo(submission.submitted_at)}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span
+              className="font-display tabular text-[#C8902A]"
+              style={{ fontSize: 13, fontWeight: 400 }}
+            >
+              +{submission.points_awarded.toLocaleString()}
+            </span>
+
+            <button
+              onClick={toggleLike}
+              className="flex items-center gap-1 cursor-pointer"
+              aria-label={liked ? 'Unlike' : 'Like'}
+            >
+              <Heart
+                size={13}
+                strokeWidth={1.5}
+                className={cn('transition-all duration-150', liked ? 'text-[#C8902A] fill-[#C8902A]' : 'text-[#4A4540]')}
+              />
+              <span className={cn('text-[11px] tabular', liked ? 'text-[#C8902A]' : 'text-[#4A4540]')}>
+                {likeCount}
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </article>
   )

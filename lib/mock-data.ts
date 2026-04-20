@@ -28,14 +28,14 @@ export const DEMO_SEASON: Season = {
 }
 
 export const DEMO_TEAMS: Team[] = [
-  { id: 'team-3', season_id: 'season-1', name: 'The Wildhearts',   captain_email: '',  booking_number: null, photo_url: null, join_code: 'WILD26', total_points: 4820, created_at: '2026-03-01' },
-  { id: 'team-1', season_id: 'season-1', name: 'The Explorers',    captain_email: '',  booking_number: null, photo_url: null, join_code: 'EXPL26', total_points: 4150, created_at: '2026-03-01' },
-  { id: 'team-4', season_id: 'season-1', name: 'Summit Collective', captain_email: '', booking_number: null, photo_url: null, join_code: 'SMTC26', total_points: 3740, created_at: '2026-03-01' },
-  { id: 'team-2', season_id: 'season-1', name: 'Pine & Stone',     captain_email: '',  booking_number: null, photo_url: null, join_code: 'PSTN26', total_points: 3210, created_at: '2026-03-02' },
-  { id: 'team-5', season_id: 'season-1', name: 'Northern Lights',  captain_email: '',  booking_number: null, photo_url: null, join_code: 'NLGT26', total_points: 2890, created_at: '2026-03-02' },
-  { id: 'team-6', season_id: 'season-1', name: 'Trail Blazers',    captain_email: '',  booking_number: null, photo_url: null, join_code: 'TBLZ26', total_points: 2440, created_at: '2026-03-03' },
-  { id: 'team-7', season_id: 'season-1', name: 'The Quiet Ones',   captain_email: '',  booking_number: null, photo_url: null, join_code: 'QUIT26', total_points: 1980, created_at: '2026-03-03' },
-  { id: 'team-8', season_id: 'season-1', name: 'Riverbend',        captain_email: '',  booking_number: null, photo_url: null, join_code: 'RIVR26', total_points: 1420, created_at: '2026-03-05' },
+  { id: 'team-3', season_id: 'season-1', name: 'The Wildhearts',    captain_email: '', booking_number: null, photo_url: 'color:#B85C38', join_code: 'WILD26', total_points: 4820, created_at: '2026-03-01' },
+  { id: 'team-1', season_id: 'season-1', name: 'The Explorers',     captain_email: '', booking_number: null, photo_url: 'color:#C8902A', join_code: 'EXPL26', total_points: 4150, created_at: '2026-03-01' },
+  { id: 'team-4', season_id: 'season-1', name: 'Summit Collective',  captain_email: '', booking_number: null, photo_url: 'color:#6B8CAE', join_code: 'SMTC26', total_points: 3740, created_at: '2026-03-01' },
+  { id: 'team-2', season_id: 'season-1', name: 'Pine & Stone',      captain_email: '', booking_number: null, photo_url: 'color:#7A9E7E', join_code: 'PSTN26', total_points: 3210, created_at: '2026-03-02' },
+  { id: 'team-5', season_id: 'season-1', name: 'Northern Lights',   captain_email: '', booking_number: null, photo_url: 'color:#4A8C8C', join_code: 'NLGT26', total_points: 2890, created_at: '2026-03-02' },
+  { id: 'team-6', season_id: 'season-1', name: 'Trail Blazers',     captain_email: '', booking_number: null, photo_url: 'color:#C87429', join_code: 'TBLZ26', total_points: 2440, created_at: '2026-03-03' },
+  { id: 'team-7', season_id: 'season-1', name: 'The Quiet Ones',    captain_email: '', booking_number: null, photo_url: 'color:#9E6B7A', join_code: 'QUIT26', total_points: 1980, created_at: '2026-03-03' },
+  { id: 'team-8', season_id: 'season-1', name: 'Riverbend',         captain_email: '', booking_number: null, photo_url: 'color:#8A7C6E', join_code: 'RIVR26', total_points: 1420, created_at: '2026-03-05' },
 ]
 
 export const DEMO_MEMBERS: TeamMember[] = [
