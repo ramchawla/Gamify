@@ -9,7 +9,7 @@ export const DEMO_SESSION: NomaSess = {
   team_id: 'team-1',
   member_id: 'member-1',
   season_id: 'season-1',
-  display_name: 'Alex',
+  display_name: 'Ryen',
 }
 
 export const DEMO_SEASON: Season = {
@@ -39,10 +39,10 @@ export const DEMO_TEAMS: Team[] = [
 ]
 
 export const DEMO_MEMBERS: TeamMember[] = [
-  { id: 'member-1', team_id: 'team-1', display_name: 'Alex',   email: null, role: 'captain', joined_at: '2026-03-01' },
-  { id: 'member-2', team_id: 'team-1', display_name: 'Sarah',  email: null, role: 'member',  joined_at: '2026-03-01' },
-  { id: 'member-3', team_id: 'team-1', display_name: 'James',  email: null, role: 'member',  joined_at: '2026-03-02' },
-  { id: 'member-4', team_id: 'team-1', display_name: 'Maya',   email: null, role: 'member',  joined_at: '2026-03-02' },
+  { id: 'member-1', team_id: 'team-1', display_name: 'Ryen',   email: null, role: 'captain', joined_at: '2026-03-01' },
+  { id: 'member-2', team_id: 'team-1', display_name: 'Ram',  email: null, role: 'member',  joined_at: '2026-03-01' },
+  { id: 'member-3', team_id: 'team-1', display_name: 'Nick',  email: null, role: 'member',  joined_at: '2026-03-02' },
+  { id: 'member-4', team_id: 'team-1', display_name: 'Connor',   email: null, role: 'member',  joined_at: '2026-03-02' },
 ]
 
 export const DEMO_MISSIONS: Mission[] = [
